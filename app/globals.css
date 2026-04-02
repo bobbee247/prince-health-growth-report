@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    color: #1B2A4A;
+    line-height: 1.6;
+    background: #FFFFFF;
+}
+
+:root {
+    --navy: #1B2A4A;
+    --gold: #C9A44A;
+    --cream: #F5F0E6;
+    --white: #FFFFFF;
+    --dark-navy: #0F1620;
+    --text-light: #F5F0E6;
+    --accent-dark: #8B7A3E;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    line-height: 1.2;
+}
+
+h1 { font-size: 4rem; font-weight: 800; letter-spacing: -2px; }
+h2 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 2rem; }
+h3 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+p { font-size: 1.05rem; line-height: 1.8; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.hero {
+    background: linear-gradient(135deg, var(--dark-navy) 0%, var(--navy) 100%);
+    color: var(--white);
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+    opacity: 0.1;
+    border-radius: 50%;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dna-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 12px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.logo-text {
+    font-size: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: var(--white);
+}
+
+.report-title { font-size: 3.5rem; margin: 1.5rem 0; color: var(--white); }
+.report-period { font-size: 1.3rem; color: var(--gold); margin-bottom: 1rem; font-weight: 600; }
+.gold-accent-line { width: 120px; height: 4px; background: var(--gold); margin: 2rem auto; border-radius: 2px; }
+.report-location { font-size: 1.2rem; color: var(--text-light); margin-top: 1.5rem; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+.section { padding: 5rem 2rem; }
+.section-light { background: var(--white); }
+.section-dark { background: var(--navy); color: var(--white); }
+.section-cream { background: var(--cream); }
+.section-title { text-align: center; margin-bottom: 3rem; }
+.section-title h2 { color: inherit; }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    border-left: 4px solid var(--gold);
+    padding: 2.5rem;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(27, 42, 74, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 40px rgba(27, 42, 74, 0.12);
+}
+
+.card-icon { font-size: 3rem; margin-bottom: 1rem; }
+.card-metric {
+    font-size: 2.5rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+}
+.card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; color: var(--navy); }
+.card-description { font-size: 0.95rem; color: #555; line-height: 1.8; }
+
+.chart-container {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 3rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.chart-container.light {
+    background: var(--white);
+    border: 1px solid #E8E3D8;
+}
+
+.table-container { overflow-x: auto; margin: 2rem 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+table thead { background: var(--navy); color: var(--white); }
+table th { padding: 1.25rem; text-align: left; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; text-transform: uppercase; }
+table td { padding: 1.25rem; border-bottom: 1px solid #E8E3D8; }
+table tbody tr { transition: background-color 0.2s ease; }
+table tbody tr:hover { background-color: var(--cream); }
+table tbody tr:last-child td { border-bottom: none; }
+.metric-value { font-weight: 700; color: var(--navy); }
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.insight-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(201, 164, 74, 0.3);
+    padding: 2.5rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.insight-card h4 { font-size: 1.3rem; margin-bottom: 1rem; color: var(--gold); }
+.insight-card p { color: var(--text-light); font-size: 0.95rem; line-height: 1.8; }
+
+.footer {
+    background: var(--dark-navy);
+    color: var(--text-light);
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.footer-content { max-width: 600px; margin: 0 auto; }
+.footer-company { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+.footer-address { font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.5rem; }
+.footer-phone { font-size: 1.2rem; color: var(--gold); font-weight: 600; margin-bottom: 2rem; }
+.footer-date { font-size: 0.85rem; color: #999; padding-top: 1.5rem; border-top: 1px solid rgba(201, 164, 74, 0.2); }
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #C9A44A;
+}
+
+.stat-label {
+    color: #999;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    color: #C9A44A;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 1.8rem; }
+    .report-title { font-size: 2rem; }
+    .section { padding: 3rem 1.5rem; }
+    .container { padding: 0 1rem; }
+    .card { padding: 1.5rem; }
+    .chart-container { padding: 1.5rem; }
+    .logo-text { font-size: 1.5rem; }
+    .dna-icon { width: 40px; height: 40px; font-size: 1.5rem; }
+}
