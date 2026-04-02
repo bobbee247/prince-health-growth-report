@@ -12,12 +12,12 @@ const organicData = [
 ]
 
 const channelData = [
-  { month: 'Oct', Direct: 807, 'Organic Search': 819, 'Organic Social': 23, Referral: 58 },
-  { month: 'Nov', Direct: 618, 'Organic Search': 657, 'Organic Social': 18, Referral: 41 },
-  { month: 'Dec', Direct: 614, 'Organic Search': 650, 'Organic Social': 22, Referral: 47 },
-  { month: 'Jan', Direct: 710, 'Organic Search': 811, 'Organic Social': 31, Referral: 52 },
-  { month: 'Feb', Direct: 856, 'Organic Search': 947, 'Organic Social': 1133, Referral: 63 },
-  { month: 'Mar', Direct: 891, 'Organic Search': 1173, 'Organic Social': 870, Referral: 71 },
+  { month: 'Oct', Direct: 1159, 'Organic Search': 819, 'Organic Social': 109, Referral: 49 },
+  { month: 'Nov', Direct: 1056, 'Organic Search': 657, 'Organic Social': 55, Referral: 31 },
+  { month: 'Dec', Direct: 999, 'Organic Search': 650, 'Organic Social': 54, Referral: 54 },
+  { month: 'Jan', Direct: 950, 'Organic Search': 811, 'Organic Social': 112, Referral: 40 },
+  { month: 'Feb', Direct: 939, 'Organic Search': 947, 'Organic Social': 1133, Referral: 49 },
+  { month: 'Mar', Direct: 935, 'Organic Search': 1173, 'Organic Social': 870, Referral: 34 },
 ]
 
 const gbpData = [
@@ -116,7 +116,7 @@ function Hero() {
         <img src="https://onecdn.io/media/e0657cb6-254c-4c94-bd62-41a08395c050/md2x" alt="Prince Health" className="hero-logo-img" />
       </div>
       <h1>6-Month Organic<br /><em>Growth Report</em></h1>
-      <p className="hero-period">October 2025 â March 2026</p>
+      <p className="hero-period">October 2025 Ã¢ÂÂ March 2026</p>
       <hr className="hero-rule" />
       <p className="hero-location">The Woodlands, TX</p>
       <div className="scroll-cue">
@@ -132,9 +132,9 @@ function Overview() {
   return (
     <section className="overview" ref={r}>
       <div className="overview-inner">
-        <div className="overview-label">— Strategic Overview —</div>
+        <div className="overview-label">â Strategic Overview â</div>
         <p className="overview-text">
-          Over the past six months, Prince Health & Wellness has achieved a significant inflection point in organic visibility. Organic search sessions have climbed 43% — rising from 819 to 1,173 monthly sessions — signaling that the content and SEO foundation is translating into real patient discovery. Equally impressive, site engagement sits at 59%, well above the ~40% healthcare industry benchmark, which tells us visitors aren’t just arriving — they’re staying, reading, and exploring treatment options. Google Business Profile actions are up 42%, meaning more prospective patients are calling, requesting directions, and clicking through to book. The compounding trajectory across all three channels indicates Prince Health is entering a sustained growth phase, and the data strongly supports continued investment in organic content, local SEO, and conversion-focused landing pages heading into Q3 and beyond.
+          Over the past six months, Prince Health & Wellness has achieved a significant inflection point in organic visibility. Organic search sessions have climbed 43% â rising from 819 to 1,173 monthly sessions â signaling that the content and SEO foundation is translating into real patient discovery. Equally impressive, site engagement sits at 59%, well above the ~40% healthcare industry benchmark, which tells us visitors arenât just arriving â theyâre staying, reading, and exploring treatment options. Google Business Profile actions are up 42%, meaning more prospective patients are calling, requesting directions, and clicking through to book. The compounding trajectory across all three channels indicates Prince Health is entering a sustained growth phase, and the data strongly supports continued investment in organic content, local SEO, and conversion-focused landing pages heading into Q3 and beyond.
         </p>
       </div>
     </section>
@@ -222,11 +222,11 @@ function ChannelChart() {
               <XAxis dataKey="month" tick={axisStyle} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} tickLine={false} />
               <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
               <Tooltip content={<ChartTooltip />} />
-              <Legend wrapperStyle={{ fontSize: '0.82rem', color: '#7E8FA0', paddingTop: 12 }} />
-              <Bar dataKey="Direct" stackId="a" fill="rgba(236,231,218,0.2)" radius={[0,0,0,0]} />
+              <Legend wrapperStyle={{ fontSize: '0.82rem', paddingTop: 12 }} formatter={(v) => <span style={{ color: '#ECE7DA' }}>{v}</span>} />
+              <Bar dataKey="Direct" stackId="a" fill="rgba(236,231,218,0.45)" radius={[0,0,0,0]} />
               <Bar dataKey="Organic Search" stackId="a" fill="#C9A44A" />
-              <Bar dataKey="Organic Social" stackId="a" fill="#1B2D44" />
-              <Bar dataKey="Referral" stackId="a" fill="rgba(201,164,74,0.3)" radius={[3,3,0,0]} />
+              <Bar dataKey="Organic Social" stackId="a" fill="#3A5A78" />
+              <Bar dataKey="Referral" stackId="a" fill="rgba(201,164,74,0.55)" radius={[3,3,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -253,10 +253,10 @@ function GBPSection() {
                 <XAxis dataKey="month" tick={axisStyle} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} tickLine={false} />
                 <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
-                <Legend wrapperStyle={{ fontSize: '0.82rem', color: '#7E8FA0', paddingTop: 12 }} />
+                <Legend wrapperStyle={{ fontSize: '0.82rem', paddingTop: 12 }} formatter={(v) => <span style={{ color: '#ECE7DA' }}>{v}</span>} />
                 <Bar dataKey="interactions" name="Total Interactions" fill="#C9A44A" radius={[3,3,0,0]} />
-                <Bar dataKey="calls" name="Calls" fill="#1B2D44" radius={[3,3,0,0]} />
-                <Bar dataKey="directions" name="Directions" fill="rgba(201,164,74,0.35)" radius={[3,3,0,0]} />
+                <Bar dataKey="calls" name="Calls" fill="#3A5A78" radius={[3,3,0,0]} />
+                <Bar dataKey="directions" name="Directions" fill="rgba(201,164,74,0.55)" radius={[3,3,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
