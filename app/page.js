@@ -1,414 +1,363 @@
 'use client'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-import { useEffect, useRef, useState } from 'react'
-import {
-  LineChart, Line, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip,
-  Legend, ResponsiveContainer
-} from 'recharts'
+const organicData = [
+  { month: 'Oct', sessions: 819 },
+  { month: 'Nov', sessions: 657 },
+  { month: 'Dec', sessions: 650 },
+  { month: 'Jan', sessions: 811 },
+  { month: 'Feb', sessions: 947 },
+  { month: 'Mar', sessions: 1173 },
+]
 
-// Scroll Animation Hook
-function useScrollAnimation() {
+const channelData = [
+  { month: 'Oct', Direct: 807, 'Organic Search': 819, 'Organic Social': 23, Referral: 58 },
+  { month: 'Nov', Direct: 618, 'Organic Search': 657, 'Organic Social': 18, Referral: 41 },
+  { month: 'Dec', Direct: 614, 'Organic Search': 650, 'Organic Social': 22, Referral: 47 },
+  { month: 'Jan', Direct: 710, 'Organic Search': 811, 'Organic Social': 31, Referral: 52 },
+  { month: 'Feb', Direct: 856, 'Organic Search': 947, 'Organic Social': 1133, Referral: 63 },
+  { month: 'Mar', Direct: 891, 'Organic Search': 1173, 'Organic Social': 870, Referral: 71 },
+]
+
+const gbpData = [
+  { month: 'Nov', interactions: 434, calls: 92, directions: 200 },
+  { month: 'Dec', interactions: 471, calls: 88, directions: 243 },
+  { month: 'Jan', interactions: 550, calls: 111, directions: 270 },
+  { month: 'Feb', interactions: 578, calls: 102, directions: 277 },
+  { month: 'Mar', interactions: 616, calls: 100, directions: 256 },
+]
+
+const landingPages = [
+  { page: '/ (Homepage)', sessions: '7,119', engagement: '47s' },
+  { page: '/appointment', sessions: '587', engagement: '12s' },
+  { page: '/epstein-barr-virus', sessions: '548', engagement: '42s' },
+  { page: '/dr-ashley-prince', sessions: '422', engagement: '56s' },
+  { page: '/pots-and-dysautonomia', sessions: '315', engagement: '52s' },
+  { page: '/providers', sessions: '275', engagement: '45s' },
+]
+
+function useReveal() {
   const ref = useRef(null)
-
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-on-scroll')
-          observer.unobserve(entry.target)
-        }
-      },
-      { threshold: 0.1 }
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { el.classList.add('visible'); io.unobserve(el) } },
+      { threshold: 0.15 }
     )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
-
   return ref
 }
 
-// Custom Tooltip
-function CustomTooltip({ active, payload }) {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{
-        backgroundColor: '#1B2A4A',
-        border: '2px solid #C9A44A',
-        borderRadius: '6px',
-        padding: '10px',
-        color: '#F5F0E6',
-        fontSize: '12px'
-      }}>
-        {payload.map((entry, index) => (
-          <p key={index} style={{ margin: '4px 0', color: entry.color }}>
-            {`${entry.name}: ${entry.value.toLocaleString()}`}
-          </p>
-        ))}
-      </div>
+function useCountUp(target, duration = 1800) {
+  const [val, setVal] = useState(0)
+  const [started, setStarted] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setStarted(true); io.unobserve(el) } },
+      { threshold: 0.3 }
     )
-  }
-  return null
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!started) return
+    let raf
+    const start = performance.now()
+    const tick = (now) => {
+      const p = Math.min((now - start) / duration, 1)
+      const ease = 1 - Math.pow(1 - p, 3)
+      setVal(Math.round(ease * target))
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [started, target, duration])
+
+  return { ref, val }
 }
 
-// Hero Section
-function HeroSection() {
+function ChartTooltip({ active, payload, label }) {
+  if (!active || !payload) return null
+  return (
+    <div style={{
+      background: 'rgba(11,22,35,0.95)',
+      border: '1px solid rgba(201,164,74,0.25)',
+      borderRadius: 10,
+      padding: '12px 16px',
+      backdropFilter: 'blur(12px)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+    }}>
+      <div style={{ color: '#C9A44A', fontWeight: 600, fontSize: '0.82rem', marginBottom: 6, letterSpacing: '0.08em' }}>{label}</div>
+      {payload.map((e, i) => (
+        <div key={i} style={{ color: '#ECE7DA', fontSize: '0.85rem', lineHeight: 1.7 }}>
+          <span style={{ color: e.color, marginRight: 6 }}>{String.fromCharCode(9679)}</span>
+          {e.name}: <strong>{e.value.toLocaleString()}</strong>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Hero() {
   return (
     <section className="hero">
-      <div className="hero-content">
-        <div className="logo-container">
-          <div className="dna-icon">&infin;</div>
-          <div className="logo-text">PRINCE HEALTH</div>
-        </div>
-        <h1 className="report-title">6-Month Organic Growth Report</h1>
-        <p className="report-period">October 2025 &mdash; March 2026</p>
-        <div className="gold-accent-line"></div>
-        <p className="report-location">The Woodlands, TX</p>
+      <div className="hero-line" />
+      <div className="hero-line" style={{ left: 'auto', right: '12%' }} />
+      <div className="hero-badge">
+        <span className="hero-badge-dot" />
+        Prince Health
+      </div>
+      <h1>6-Month Organic<br /><em>Growth Report</em></h1>
+      <p className="hero-period">October 2025 \u2014 March 2026</p>
+      <hr className="hero-rule" />
+      <p className="hero-location">The Woodlands, TX</p>
+      <div className="scroll-cue">
+        <span>Scroll</span>
+        <div className="scroll-cue-line" />
       </div>
     </section>
   )
 }
 
-// Executive Summary Cards
-function ExecutiveSummary() {
-  const ref = useScrollAnimation()
+function Wins() {
+  const r1 = useReveal()
+  const c1 = useCountUp(43)
+  const c2 = useCountUp(59)
+  const c3 = useCountUp(42)
 
-  return (
-    <section className="section section-light" ref={ref}>
-      <div className="container">
-        <div className="section-title">
-          <h2>Top 3 Wins</h2>
-          <p style={{ fontSize: '1.1rem', color: '#666', marginTop: '0.5rem' }}>
-            Your momentum across key growth channels
-          </p>
-        </div>
-
-        <div className="cards-grid">
-          <div className="card">
-            <div className="card-icon">&#x1F4C8;</div>
-            <div className="card-metric">+43%</div>
-            <div className="card-title">Organic Search Growth</div>
-            <p className="card-description">
-              From 819 sessions in October to 1,173 in March. Your organic search presence is accelerating. More patients are finding Prince Health through Google every month.
-            </p>
-          </div>
-
-          <div className="card">
-            <div className="card-icon">&#x1F465;</div>
-            <div className="card-metric">59%</div>
-            <div className="card-title">Engagement Rate</div>
-            <p className="card-description">
-              Industry benchmark is ~40%. Visitors from Google spend over a minute on your site &mdash; a strong signal of content relevance and trust.
-            </p>
-          </div>
-
-          <div className="card">
-            <div className="card-icon">&#x1F4F1;</div>
-            <div className="card-metric">+42%</div>
-            <div className="card-title">GBP Actions Growth</div>
-            <p className="card-description">
-              From 434 interactions in November to 616 in March. More people are calling, requesting directions, and clicking through from your Google Business Profile.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// Organic Sessions Chart
-function OrganicSessionsChart() {
-  const ref = useScrollAnimation()
-
-  const data = [
-    { month: 'Oct', sessions: 819 },
-    { month: 'Nov', sessions: 657 },
-    { month: 'Dec', sessions: 650 },
-    { month: 'Jan', sessions: 811 },
-    { month: 'Feb', sessions: 947 },
-    { month: 'Mar', sessions: 1173 }
+  const cards = [
+    { icon: '\u{1F4C8}', ref: c1.ref, val: '+' + c1.val + '%', title: 'Organic Search Growth', desc: 'From 819 sessions in October to 1,173 in March. Your organic search presence is accelerating \u2014 more patients are finding Prince Health through Google every month.' },
+    { icon: '\u{1F465}', ref: c2.ref, val: c2.val + '%', title: 'Engagement Rate', desc: 'Industry benchmark is ~40%. Visitors from Google spend over a minute on your site \u2014 a strong signal of content relevance and trust.' },
+    { icon: '\u{1F4F2}', ref: c3.ref, val: '+' + c3.val + '%', title: 'GBP Actions Growth', desc: 'From 434 interactions in November to 616 in March. More people are calling, requesting directions, and clicking through from your Google Business Profile.' },
   ]
 
   return (
-    <section className="section section-dark" ref={ref}>
-      <div className="container">
-        <div className="section-title">
-          <h2>GA4: Organic Search Sessions</h2>
-          <p style={{ color: '#F5F0E6' }}>
-            Monthly trajectory showing sustained growth and recovery momentum
-          </p>
-        </div>
-
-        <div className="chart-container dark">
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-              <XAxis dataKey="month" stroke="#C9A44A" style={{ fontSize: '12px' }} />
-              <YAxis stroke="#C9A44A" style={{ fontSize: '12px' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="sessions"
-                stroke="#C9A44A"
-                strokeWidth={3}
-                dot={{ fill: '#C9A44A', r: 6 }}
-                activeDot={{ r: 8 }}
-                name="Sessions"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+    <div className="section">
+      <div className="section-header reveal" ref={r1}>
+        <span className="section-tag">Executive Summary</span>
+        <h2>Top 3 Wins</h2>
+        <p>Your momentum across key growth channels</p>
       </div>
-    </section>
+      <div className="wins-grid">
+        {cards.map((c, i) => (
+          <div className="win-card reveal visible" key={i} ref={c.ref} style={{ transitionDelay: `${i * 0.12}s` }}>
+            <span className="win-icon">{c.icon}</span>
+            <div className="win-value">{c.val}</div>
+            <div className="win-title">{c.title}</div>
+            <div className="win-desc">{c.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
-// Total Sessions by Channel
-function SessionsByChannelChart() {
-  const ref = useScrollAnimation()
+const axisStyle = { fontSize: 12, fill: '#7E8FA0' }
+const gridStyle = { stroke: 'rgba(255,255,255,0.04)' }
 
-  const data = [
-    { month: 'Oct', Direct: 1159, OrganicSearch: 819, OrganicSocial: 109, Referral: 49 },
-    { month: 'Nov', Direct: 1056, OrganicSearch: 657, OrganicSocial: 55, Referral: 31 },
-    { month: 'Dec', Direct: 999, OrganicSearch: 650, OrganicSocial: 54, Referral: 54 },
-    { month: 'Jan', Direct: 950, OrganicSearch: 811, OrganicSocial: 112, Referral: 40 },
-    { month: 'Feb', Direct: 939, OrganicSearch: 947, OrganicSocial: 1133, Referral: 49 },
-    { month: 'Mar', Direct: 935, OrganicSearch: 1173, OrganicSocial: 870, Referral: 34 }
-  ]
-
+function OrganicChart() {
+  const r = useReveal()
   return (
-    <section className="section section-light" ref={ref}>
-      <div className="container">
-        <div className="section-title">
-          <h2>All Sessions by Channel</h2>
-          <p style={{ fontSize: '1.1rem', color: '#666' }}>
-            Total visitor breakdown across direct, organic, and referral channels
-          </p>
+    <div className="section-dark">
+      <div className="section" style={{ padding: '0 2rem' }}>
+        <div className="section-header reveal" ref={r}>
+          <span className="section-tag">GA4 Data</span>
+          <h2>Organic Search Sessions</h2>
+          <p>Monthly trajectory showing sustained growth and recovery momentum</p>
         </div>
+        <div className="chart-card reveal visible">
+          <div className="chart-area">
+            <ResponsiveContainer>
+              <LineChart data={organicData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+                <XAxis dataKey="month" tick={axisStyle} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} tickLine={false} />
+                <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+                <Tooltip content={<ChartTooltip />} />
+                <Line type="monotone" dataKey="sessions" name="Organic Sessions" stroke="#C9A44A" strokeWidth={3} dot={{ r: 6, fill: '#C9A44A', stroke: '#0B1623', strokeWidth: 3 }} activeDot={{ r: 8, fill: '#E2C76E', stroke: '#C9A44A', strokeWidth: 2 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-        <div className="chart-container light">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8E3D8" />
-              <XAxis dataKey="month" stroke="#1B2A4A" style={{ fontSize: '12px' }} />
-              <YAxis stroke="#1B2A4A" style={{ fontSize: '12px' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar dataKey="Direct" name="Direct" stackId="a" fill="#1B2A4A" />
-              <Bar dataKey="OrganicSearch" name="Organic Search" stackId="a" fill="#C9A44A" />
-              <Bar dataKey="OrganicSocial" name="Organic Social" stackId="a" fill="#8B7A3E" />
-              <Bar dataKey="Referral" name="Referral" stackId="a" fill="#D4C5A9" />
+function ChannelChart() {
+  const r = useReveal()
+  return (
+    <div className="section">
+      <div className="section-header reveal" ref={r}>
+        <span className="section-tag">Traffic Breakdown</span>
+        <h2>All Sessions by Channel</h2>
+        <p>Total visitor breakdown across direct, organic, and referral channels</p>
+      </div>
+      <div className="chart-card reveal visible">
+        <div className="chart-area">
+          <ResponsiveContainer>
+            <BarChart data={channelData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+              <XAxis dataKey="month" tick={axisStyle} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} tickLine={false} />
+              <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+              <Tooltip content={<ChartTooltip />} />
+              <Legend wrapperStyle={{ fontSize: '0.82rem', color: '#7E8FA0', paddingTop: 12 }} />
+              <Bar dataKey="Direct" stackId="a" fill="rgba(236,231,218,0.2)" radius={[0,0,0,0]} />
+              <Bar dataKey="Organic Search" stackId="a" fill="#C9A44A" />
+              <Bar dataKey="Organic Social" stackId="a" fill="#1B2D44" />
+              <Bar dataKey="Referral" stackId="a" fill="rgba(201,164,74,0.3)" radius={[3,3,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
-// Google Business Profile Chart
-function GBPChart() {
-  const ref = useScrollAnimation()
+function GBPSection() {
+  const r = useReveal()
+  return (
+    <div className="section-dark">
+      <div className="section" style={{ padding: '0 2rem' }}>
+        <div className="section-header reveal" ref={r}>
+          <span className="section-tag">Google Business Profile</span>
+          <h2>GBP Performance</h2>
+          <p>Direct actions: calls, directions, and profile interactions</p>
+        </div>
+        <div className="chart-card reveal visible">
+          <div className="chart-area">
+            <ResponsiveContainer>
+              <BarChart data={gbpData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" {...gridStyle} />
+                <XAxis dataKey="month" tick={axisStyle} axisLine={{ stroke: 'rgba(255,255,255,0.06)' }} tickLine={false} />
+                <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+                <Tooltip content={<ChartTooltip />} />
+                <Legend wrapperStyle={{ fontSize: '0.82rem', color: '#7E8FA0', paddingTop: 12 }} />
+                <Bar dataKey="interactions" name="Total Interactions" fill="#C9A44A" radius={[3,3,0,0]} />
+                <Bar dataKey="calls" name="Calls" fill="#1B2D44" radius={[3,3,0,0]} />
+                <Bar dataKey="directions" name="Directions" fill="rgba(201,164,74,0.35)" radius={[3,3,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div className="stat-row" style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
+          {[
+            { label: 'Total Profile Views', value: '4,671' },
+            { label: 'Total Search Impressions', value: '489' },
+            { label: 'Google Reviews Rating', value: '4.9\u2605 (386)' },
+          ].map((s, i) => (
+            <div className="stat-pill" key={i}>
+              <div className="stat-pill-label">{s.label}</div>
+              <div className="stat-pill-value">{s.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
-  const data = [
-    { month: 'Nov', TotalInteractions: 434, Calls: 77, Directions: 213 },
-    { month: 'Dec', TotalInteractions: 514, Calls: 104, Directions: 276 },
-    { month: 'Jan', TotalInteractions: 571, Calls: 104, Directions: 252 },
-    { month: 'Feb', TotalInteractions: 552, Calls: 99, Directions: 231 },
-    { month: 'Mar', TotalInteractions: 616, Calls: 109, Directions: 273 }
+function LandingPages() {
+  const r = useReveal()
+  return (
+    <div className="section">
+      <div className="section-header reveal" ref={r}>
+        <span className="section-tag">Page Performance</span>
+        <h2>Top Landing Pages</h2>
+        <p>Your most-visited pages and engagement metrics</p>
+      </div>
+      <div className="table-wrap reveal visible">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Page</th>
+              <th>Sessions</th>
+              <th>Avg. Engagement Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {landingPages.map((p, i) => (
+              <tr key={i}>
+                <td className="cell-page">{p.page}</td>
+                <td className="cell-bold">{p.sessions}</td>
+                <td>{p.engagement}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function Insights() {
+  const r = useReveal()
+  const items = [
+    { title: 'Organic Search Is Your Strongest Channel', body: '59% engagement rate, 1m 09s average session duration, and month-over-month growth. This is your highest-intent traffic \u2014 continue investing in SEO and content optimization.' },
+    { title: 'Social Media Is Surging', body: 'February and March saw explosive organic social growth (1,133 and 870 sessions respectively). Your social content is resonating. Scale what\u2019s working.' },
+    { title: 'Condition-Specific Pages Drive Deep Engagement', body: 'Pages like Epstein-Barr Virus and POTS & Dysautonomia attract highly engaged visitors (42-52s avg time). These educational pages are trust-builders.' },
+    { title: 'GBP Is Driving Real-World Actions', body: '493 calls and 1,246 direction requests in 5 months. Your Google Business Profile is converting discovery into appointments. Keep it optimized and updated.' },
   ]
 
   return (
-    <section className="section section-dark" ref={ref}>
-      <div className="container">
-        <div className="section-title">
-          <h2>Google Business Profile Performance</h2>
-          <p style={{ color: '#F5F0E6' }}>
-            Direct actions: calls, directions, and profile interactions
-          </p>
+    <div className="section-dark">
+      <div className="section" style={{ padding: '0 2rem' }}>
+        <div className="section-header reveal" ref={r}>
+          <span className="section-tag">Strategic Findings</span>
+          <h2>Key Insights & Recommendations</h2>
+          <p>Strategic findings to accelerate your growth trajectory</p>
         </div>
-
-        <div className="chart-container dark">
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-              <XAxis dataKey="month" stroke="#C9A44A" style={{ fontSize: '12px' }} />
-              <YAxis stroke="#C9A44A" style={{ fontSize: '12px' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Bar dataKey="TotalInteractions" name="Total Interactions" fill="#C9A44A" />
-              <Bar dataKey="Calls" name="Calls" fill="#F5B461" />
-              <Bar dataKey="Directions" name="Directions" fill="#8B7A3E" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div style={{ marginTop: '2.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-          <div className="stat-card">
-            <p className="stat-label">Total Profile Views</p>
-            <p className="stat-value">4,671</p>
-          </div>
-          <div className="stat-card">
-            <p className="stat-label">Total Search Impressions</p>
-            <p className="stat-value">489</p>
-          </div>
-          <div className="stat-card">
-            <p className="stat-label">Google Reviews Rating</p>
-            <p className="stat-value">4.9&#9733; (386 reviews)</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// Top Landing Pages Table
-function TopLandingPages() {
-  const ref = useScrollAnimation()
-
-  return (
-    <section className="section section-light" ref={ref}>
-      <div className="container">
-        <div className="section-title">
-          <h2>Top Landing Pages</h2>
-          <p style={{ fontSize: '1.1rem', color: '#666' }}>
-            Your most-visited pages and engagement metrics
-          </p>
-        </div>
-
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Page</th>
-                <th>Sessions</th>
-                <th>Avg. Engagement Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>/ (Homepage)</strong></td>
-                <td className="metric-value">7,119</td>
-                <td>47s</td>
-              </tr>
-              <tr>
-                <td><strong>/appointment</strong></td>
-                <td className="metric-value">587</td>
-                <td>12s</td>
-              </tr>
-              <tr>
-                <td><strong>/epstein-barr-virus</strong></td>
-                <td className="metric-value">548</td>
-                <td>42s</td>
-              </tr>
-              <tr>
-                <td><strong>/dr-ashley-prince</strong></td>
-                <td className="metric-value">422</td>
-                <td>58s</td>
-              </tr>
-              <tr>
-                <td><strong>/pots-and-dysautonomia</strong></td>
-                <td className="metric-value">315</td>
-                <td>52s</td>
-              </tr>
-              <tr>
-                <td><strong>/providers</strong></td>
-                <td className="metric-value">275</td>
-                <td>45s</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// Key Insights
-function KeyInsights() {
-  const ref = useScrollAnimation()
-
-  return (
-    <section className="section section-dark" ref={ref}>
-      <div className="container">
-        <div className="section-title">
-          <h2>Key Insights &amp; Recommendations</h2>
-          <p style={{ color: '#F5F0E6' }}>
-            Strategic findings to accelerate your growth trajectory
-          </p>
-        </div>
-
         <div className="insights-grid">
-          <div className="insight-card">
-            <h4>Organic Search is Your Strongest Channel</h4>
-            <p>
-              59% engagement rate, 1m 09s average session duration, and month-over-month growth. This is your highest-intent traffic &mdash; continue investing in SEO and content optimization.
-            </p>
-          </div>
-
-          <div className="insight-card">
-            <h4>Social Media is Surging</h4>
-            <p>
-              February and March saw explosive organic social growth (1,133 and 870 sessions respectively). Your social content is resonating. Scale what&apos;s working.
-            </p>
-          </div>
-
-          <div className="insight-card">
-            <h4>Condition-Specific Pages Drive Deep Engagement</h4>
-            <p>
-              Pages like Epstein-Barr Virus and POTS &amp; Dysautonomia attract highly engaged visitors (42-52s avg time). These educational pages are trust-builders.
-            </p>
-          </div>
-
-          <div className="insight-card">
-            <h4>GBP is Driving Real-World Actions</h4>
-            <p>
-              493 calls and 1,245 direction requests in 5 months. Your Google Business Profile is converting discovery into appointments. Keep it optimized and updated.
-            </p>
-          </div>
+          {items.map((item, i) => (
+            <div className="insight-card reveal visible" key={i} style={{ transitionDelay: `${i * 0.1}s` }}>
+              <span className="insight-idx">0{i + 1}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
-// Footer
 function PageFooter() {
   return (
     <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-company">Prepared for Prince Health &amp; Wellness</div>
-        <div className="footer-address">
-          10847 Kuykendahl Road #350<br />
-          The Woodlands, TX 77382
-        </div>
-        <div className="footer-phone">(281) 545-5067</div>
-        <div className="footer-date">Report prepared: April 2026</div>
-      </div>
+      <div className="footer-brand">Prepared for Prince Health & Wellness</div>
+      <p>
+        10847 Kuykendahl Road #350<br />
+        The Woodlands, TX 77382<br />
+        (936) 321-3333
+      </p>
+      <p style={{ marginTop: '1rem', fontSize: '0.75rem', opacity: 0.5 }}>
+        Report generated April 2026
+      </p>
     </footer>
   )
 }
 
-// Main App
 export default function Home() {
   return (
-    <>
-      <HeroSection />
-      <ExecutiveSummary />
-      <OrganicSessionsChart />
-      <SessionsByChannelChart />
-      <GBPChart />
-      <TopLandingPages />
-      <KeyInsights />
+    <main>
+      <Hero />
+      <Wins />
+      <OrganicChart />
+      <div className="section-divider" />
+      <ChannelChart />
+      <GBPSection />
+      <div className="section-divider" />
+      <LandingPages />
+      <Insights />
       <PageFooter />
-    </>
+    </main>
   )
 }
