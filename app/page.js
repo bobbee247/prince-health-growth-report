@@ -117,7 +117,7 @@ function Hero() {
         Prince Health
       </div>
       <h1>6-Month Organic<br /><em>Growth Report</em></h1>
-      <p className="hero-period">October 2025 \u2014 March 2026</p>
+      <p className="hero-period">October 2025 — March 2026</p>
       <hr className="hero-rule" />
       <p className="hero-location">The Woodlands, TX</p>
       <div className="scroll-cue">
