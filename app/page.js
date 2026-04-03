@@ -116,7 +116,7 @@ function Hero() {
         <img src="https://onecdn.io/media/e0657cb6-254c-4c94-bd62-41a08395c050/md2x" alt="Prince Health" className="hero-logo-img" />
       </div>
       <h1>6-Month Organic<br /><em>Growth Report</em></h1>
-      <p className="hero-period">October 2025 Ã¢ÂÂ March 2026</p>
+      <p className="hero-period">October 2025 -- March 2026</p>
       <hr className="hero-rule" />
       <p className="hero-location">The Woodlands, TX</p>
       <div className="scroll-cue">
@@ -132,9 +132,9 @@ function Overview() {
   return (
     <section className="overview" ref={r}>
       <div className="overview-inner">
-        <div className="overview-label">â Strategic Overview â</div>
+        <div className="overview-label">-- Strategic Overview --</div>
         <p className="overview-text">
-          Over the past six months, Prince Health & Wellness has achieved a significant inflection point in organic visibility. Organic search sessions have climbed 43% â rising from 819 to 1,173 monthly sessions â signaling that the content and SEO foundation is translating into real patient discovery. Equally impressive, site engagement sits at 59%, well above the ~40% healthcare industry benchmark, which tells us visitors arenât just arriving â theyâre staying, reading, and exploring treatment options. Google Business Profile actions are up 42%, meaning more prospective patients are calling, requesting directions, and clicking through to book. The compounding trajectory across all three channels indicates Prince Health is entering a sustained growth phase, and the data strongly supports continued investment in organic content, local SEO, and conversion-focused landing pages heading into Q3 and beyond.
+          Over the past six months, Prince Health & Wellness has achieved a significant inflection point in organic visibility. Organic search sessions have climbed 43% -- rising from 819 to 1,173 monthly sessions -- signaling that the content and SEO foundation is translating into real patient discovery. Equally impressive, site engagement sits at 59%, well above the ~40% healthcare industry benchmark, which tells us visitors aren't just arriving -- they're staying, reading, and exploring treatment options. Google Business Profile actions are up 42%, meaning more prospective patients are calling, requesting directions, and clicking through to book. The compounding trajectory across all three channels indicates Prince Health is entering a sustained growth phase, and the data strongly supports continued investment in organic content, local SEO, and conversion-focused landing pages heading into Q3 and beyond.
         </p>
       </div>
     </section>
